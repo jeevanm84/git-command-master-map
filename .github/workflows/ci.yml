@@ -1,0 +1,33 @@
+name: Git Learning CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: git-learning-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate labs and documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Run safe learning checks
+        run: ./scripts/check.sh
+
+      - name: Run recovery demonstration
+        run: ./labs/05-undo-and-recovery/run.sh
+
+      - name: Run bisect demonstration
+        run: ./labs/06-debugging-with-bisect/run.sh

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Git Command Master Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e14;
+    --panel:#11161f;
+    --panel-2:#161d29;
+    --line:#26303f;
+    --line-soft:#1c2431;
+    --text:#e8edf4;
+    --text-dim:#8b96a8;
+    --text-faint:#5b6576;
+    --orange:#f5502e;      /* git orange */
+    --orange-dim:#7a2e1e;
+    --working:#39c5cf;      /* working directory */
+    --staging:#e3b341;      /* staging */
+    --local:#3fb950;        /* local repo */
+    --remote:#58a6ff;       /* remote repo */
+    --advanced:#bc8cff;     /* debugging/advanced */
+    --danger:#f85149;
+    --danger-bg:#2a1214;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 15% -5%, #0f1420 0%, transparent 60%),
+      radial-gradient(1000px 500px at 100% 10%, #150e12 0%, transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1400px;margin:0 auto;padding:48px 40px 80px;}
+
+  code, .mono{font-family:'JetBrains Mono',monospace;}
+  h1,h2,h3,.disp{font-family:'Space Grotesk',sans-serif;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:40px 44px;
+    background:linear-gradient(160deg, #131a26 0%, #0d1119 100%);
+    position:relative;
+    overflow:hidden;
+    margin-bottom:36px;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size:34px 34px;
+    opacity:.35;
+    mask-image:radial-gradient(ellipse at 70% 30%, black 0%, transparent 70%);
+  }
+  .hero-inner{position:relative; z-index:1;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px; letter-spacing:.06em; color:var(--orange);
+    border:1px solid var(--orange-dim); background:#1c0f0b;
+    padding:5px 12px; border-radius:100px; margin-bottom:20px;
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 8px var(--orange);}
+  h1.title{font-size:44px; line-height:1.08; margin:0 0 10px; font-weight:700; letter-spacing:-0.01em;}
+  h1.title span{color:var(--orange);}
+  .subtitle{color:var(--text-dim); font-size:16.5px; max-width:720px; margin:0 0 30px; line-height:1.55;}
+
+  /* Main lifecycle flow in hero */
+  .lifecycle{display:flex; align-items:stretch; gap:0; flex-wrap:wrap;}
+  .zone{
+    flex:1 1 200px; min-width:190px;
+    border-radius:12px; padding:16px 18px;
+    background:var(--panel); border:1px solid var(--line);
+    position:relative;
+  }
+  .zone .zlabel{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); margin-bottom:6px;}
+  .zone .zname{font-weight:700; font-size:16.5px; margin-bottom:2px;}
+  .zone.working{border-top:3px solid var(--working);}
+  .zone.staging{border-top:3px solid var(--staging);}
+  .zone.local{border-top:3px solid var(--local);}
+  .zone.remote{border-top:3px solid var(--remote);}
+  .arrow-col{display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 10px; min-width:90px;}
+  .arrow-col .cmds{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim); text-align:center; line-height:1.7;}
+  .arrow-col .arr{font-size:20px; color:var(--text-faint); margin:2px 0;}
+  .post-flow{
+    margin-top:18px; padding-top:16px; border-top:1px dashed var(--line);
+    font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-dim);
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  }
+  .post-flow b{color:var(--orange); font-weight:600;}
+  .chip{background:var(--panel-2); border:1px solid var(--line); padding:4px 10px; border-radius:6px;}
+
+  /* ---------- SECTION SHELL ---------- */
+  .section{margin-top:44px;}
+  .sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:6px;}
+  .sec-num{
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13px;
+    color:var(--bg); background:var(--orange); padding:3px 9px; border-radius:6px;
+  }
+  .sec-title{font-size:21px; font-weight:600; letter-spacing:-.005em;}
+  .sec-desc{color:var(--text-faint); font-size:13.5px; margin:2px 0 18px 0; padding-left:2px;}
+  .zone-tag{font-size:11px; padding:2px 9px; border-radius:100px; font-family:'JetBrains Mono',monospace; letter-spacing:.03em; border:1px solid; margin-left:2px;}
+  .tag-working{color:var(--working); border-color:#1d4d52; background:#0e2226;}
+  .tag-staging{color:var(--staging); border-color:#4d3f14; background:#241c0a;}
+  .tag-local{color:var(--local); border-color:#1e4023; background:#0f1f13;}
+  .tag-remote{color:var(--remote); border-color:#1c3a5e; background:#0d1b2e;}
+  .tag-advanced{color:var(--advanced); border-color:#3a2a5e; background:#1a1226;}
+
+  /* ---------- COMMAND GRID ---------- */
+  .grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(270px,1fr)); gap:12px;}
+  .cmd{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 16px; position:relative; transition:border-color .15s;
+  }
+  .cmd .code{
+    font-family:'JetBrains Mono',monospace; font-size:13.5px; font-weight:500;
+    color:#ffd7a8; background:#1a1108; display:inline-block;
+    padding:3px 9px; border-radius:6px; margin-bottom:8px; border:1px solid #3a250f;
+  }
+  .cmd p{margin:0; font-size:13.5px; color:var(--text-dim); line-height:1.45;}
+  .cmd.danger{border-color:#5a2323; background:var(--danger-bg);}
+  .cmd.danger .code{background:#3a1213; color:#ffb4ae; border-color:#6e2626;}
+  .cmd.danger::after{
+    content:"⚠ DESTRUCTIVE"; position:absolute; top:10px; right:12px;
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.05em;
+    color:var(--danger); font-weight:700;
+  }
+  .cmd.safe-note{border-left:3px solid var(--local);}
+
+  /* memory callout */
+  .memory{
+    margin-top:14px; display:flex; gap:10px; align-items:flex-start;
+    background:var(--panel-2); border:1px dashed #384356; border-radius:8px;
+    padding:11px 14px; font-size:13px; color:var(--text-dim);
+  }
+  .memory .m-icon{font-family:'JetBrains Mono',monospace; color:var(--orange); font-weight:700; font-size:12px;}
+  .memory .m-body b{color:var(--text); font-family:'JetBrains Mono',monospace; font-weight:600;}
+
+  /* diagram box (ascii-style) */
+  .diagram-box{
+    margin-top:14px; background:#0c1017; border:1px solid var(--line); border-radius:10px;
+    padding:16px 20px; font-family:'JetBrains Mono',monospace; font-size:13px; color:#9fb3c8;
+    overflow-x:auto; white-space:pre; line-height:1.6;
+  }
+  .diagram-box .hi{color:var(--orange); font-weight:600;}
+  .diagram-box .g{color:var(--local);}
+  .diagram-box .b{color:var(--remote);}
+
+  /* warning banner */
+  .warn-banner{
+    margin-top:16px; border:1px solid #5a2323; background:var(--danger-bg);
+    border-radius:10px; padding:14px 18px; display:flex; gap:12px; align-items:flex-start;
+  }
+  .warn-banner .wsym{font-size:20px;}
+  .warn-banner .wtext{font-size:13.5px; color:#f2b8b5;}
+  .warn-banner .wtext b{color:var(--danger); font-family:'JetBrains Mono',monospace;}
+
+  /* Daily workflow vertical */
+  .flow-vert{display:flex; flex-direction:column; align-items:stretch; gap:0; max-width:640px;}
+  .flow-step{
+    background:var(--panel); border:1px solid var(--line); border-radius:9px;
+    padding:11px 16px; font-family:'JetBrains Mono',monospace; font-size:13.5px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .flow-step .lbl{color:var(--text-faint); font-size:11px; font-family:'Inter',sans-serif;}
+  .flow-arrow-v{text-align:center; color:var(--text-faint); font-size:16px; padding:2px 0;}
+  .flow-step.hi{border-color:#3a250f; background:#1a1108;}
+  .flow-step.stagecolor{border-left:3px solid var(--working);}
+
+  /* conflict flow */
+  .conflict-flow{display:flex; flex-wrap:wrap; gap:0; align-items:center;}
+  .cflow-node{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:9px 14px; font-family:'JetBrains Mono',monospace; font-size:12.5px;
+  }
+  .cflow-node.warn{border-color:#5a2323; background:var(--danger-bg); color:#f2b8b5;}
+  .cflow-arrow{padding:0 10px; color:var(--text-faint);}
+
+  .markers{
+    margin-top:12px; font-family:'JetBrains Mono',monospace; font-size:12.5px;
+    background:#0c1017; border:1px solid var(--line); border-radius:8px; padding:12px 16px; color:var(--text-dim);
+  }
+  .markers .l1{color:var(--remote);}
+  .markers .l2{color:var(--text-faint);}
+  .markers .l3{color:var(--staging);}
+
+  /* Final memory map */
+  .mastermap{
+    display:flex; flex-direction:column; align-items:center; gap:0; margin-top:20px;
+  }
+  .mm-node{
+    width:100%; max-width:560px; background:var(--panel); border:1px solid var(--line);
+    border-radius:10px; padding:14px 20px; text-align:center;
+  }
+  .mm-node .mm-title{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14.5px; letter-spacing:.04em; margin-bottom:3px;}
+  .mm-node .mm-cmds{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-dim);}
+  .mm-arrow{color:var(--text-faint); font-size:17px; padding:3px 0;}
+  .mm-node.n1{border-top:3px solid var(--working);}
+  .mm-node.n2{border-top:3px solid var(--working);}
+  .mm-node.n3{border-top:3px solid var(--staging);}
+  .mm-node.n4{border-top:3px solid var(--local);}
+  .mm-node.n5{border-top:3px solid var(--remote);}
+  .mm-node.n6{border-top:3px solid var(--remote);}
+  .mm-node.n7{border-top:3px solid var(--staging);}
+  .mm-node.n8{border-top:3px solid var(--danger);}
+  .mm-node.n9{border-top:3px solid var(--advanced);}
+  .mm-node.n10{border-top:3px solid var(--orange);}
+
+  /* final message */
+  .final{
+    margin-top:56px; border:1px solid var(--line); border-radius:16px;
+    padding:38px 44px; background:linear-gradient(160deg, #151008 0%, #0d1119 70%);
+    text-align:center;
+  }
+  .final blockquote{
+    font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:600;
+    color:var(--text); margin:0 0 22px; line-height:1.4;
+  }
+  .final blockquote span{color:var(--orange);}
+  .final-chain{
+    font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--text-dim);
+    display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:22px;
+  }
+  .final-chain b{color:var(--working);}
+  .kv-list{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:8px; max-width:1000px; margin:0 auto; text-align:left;
+  }
+  .kv{
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; background:var(--panel);
+    border:1px solid var(--line); border-radius:7px; padding:8px 12px; color:var(--text-dim);
+  }
+  .kv b{color:var(--orange);}
+
+  .legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:18px; font-size:12px; color:var(--text-dim); font-family:'JetBrains Mono',monospace;}
+  .legend .li{display:flex; align-items:center; gap:6px;}
+  .legend .sw{width:10px; height:10px; border-radius:3px;}
+
+  footer{text-align:center; color:var(--text-faint); font-size:12px; margin-top:50px; font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow"><span class="dot"></span>GIT REFERENCE · INTERVIEW &amp; DAILY DEVOPS USE</div>
+      <h1 class="title">GIT COMMAND <span>MASTER MAP</span></h1>
+      <p class="subtitle">From Beginner to Senior DevOps Engineer — every command mapped to where it actually operates in the Git lifecycle, not just listed alphabetically.</p>
+
+      <div class="lifecycle">
+        <div class="zone remote"><div class="zlabel">Starts here</div><div class="zname">Remote Repository</div></div>
+        <div class="arrow-col"><span class="arr">→</span><div class="cmds">clone / pull<br>fetch</div></div>
+        <div class="zone working"><div class="zlabel">Zone 1</div><div class="zname">Working Directory</div></div>
+        <div class="arrow-col"><span class="arr">→</span><div class="cmds">add</div></div>
+        <div class="zone staging"><div class="zlabel">Zone 2</div><div class="zname">Staging / Index</div></div>
+        <div class="arrow-col"><span class="arr">→</span><div class="cmds">commit</div></div>
+        <div class="zone local"><div class="zlabel">Zone 3</div><div class="zname">Local Repository</div></div>
+        <div class="arrow-col"><span class="arr">→</span><div class="cmds">push</div></div>
+        <div class="zone remote"><div class="zlabel">Zone 4</div><div class="zname">Remote Repository</div></div>
+      </div>
+
+      <div class="post-flow">
+        <span class="chip">Pull Request</span><b>→</b>
+        <span class="chip">Code Review</span><b>→</b>
+        <span class="chip">Merge</span><b>→</b>
+        <span class="chip">CI/CD</span><b>→</b>
+        <span class="chip">Deployment</span>
+      </div>
+
+      <div class="legend">
+        <div class="li"><span class="sw" style="background:var(--working)"></span>Working Directory</div>
+        <div class="li"><span class="sw" style="background:var(--staging)"></span>Staging Area</div>
+        <div class="li"><span class="sw" style="background:var(--local)"></span>Local Repository</div>
+        <div class="li"><span class="sw" style="background:var(--remote)"></span>Remote Repository</div>
+        <div class="li"><span class="sw" style="background:var(--advanced)"></span>Debug / Advanced</div>
+        <div class="li"><span class="sw" style="background:var(--danger)"></span>Destructive — use with care</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. SETUP -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">01</span><span class="sec-title">Setup &amp; Configuration</span><span class="zone-tag tag-working">one-time / global</span></div>
+    <p class="sec-desc">Runs before any repository exists — configures Git itself.</p>
+    <div class="grid">
+      <div class="cmd"><span class="code">git --version</span><p>Check installed Git version.</p></div>
+      <div class="cmd"><span class="code">git config --global user.name "Name"</span><p>Configure your commit username.</p></div>
+      <div class="cmd"><span class="code">git config --global user.email "email"</span><p>Configure your commit email.</p></div>
+      <div class="cmd"><span class="code">git config --list</span><p>View current Git configuration.</p></div>
+      <div class="cmd"><span class="code">git help &lt;command&gt;</span><p>Get help for any command.</p></div>
+    </div>
+  </div>
+
+  <!-- 2. CREATE/GET -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">02</span><span class="sec-title">Create / Get a Repository</span><span class="zone-tag tag-local">local repository</span></div>
+    <p class="sec-desc">The two entry points into version control.</p>
+    <div class="grid">
+      <div class="cmd"><span class="code">git init</span><p>Convert the current folder into a Git repository.</p></div>
+      <div class="cmd"><span class="code">git clone &lt;url&gt;</span><p>Download an existing remote repository.</p></div>
+    </div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>INIT</b> = start new &nbsp;·&nbsp; <b>CLONE</b> = copy existing</div></div>
+  </div>
+
+  <!-- 3. CHECK CHANGES -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">03</span><span class="sec-title">Check Changes</span><span class="zone-tag tag-working">working dir</span><span class="zone-tag tag-staging">staging</span></div>
+    <p class="sec-desc">Inspect state before you act — the "what's going on" commands.</p>
+    <div class="grid">
+      <div class="cmd"><span class="code">git status</span><p>What changed?</p></div>
+      <div class="cmd"><span class="code">git diff</span><p>Show unstaged changes.</p></div>
+      <div class="cmd"><span class="code">git diff --staged</span><p>Show staged changes.</p></div>
+      <div class="cmd"><span class="code">git log</span><p>Commit history.</p></div>
+      <div class="cmd"><span class="code">git log --oneline</span><p>Compact commit history.</p></div>
+      <div class="cmd"><span class="code">git show &lt;commit&gt;</span><p>Inspect a single commit in detail.</p></div>
+    </div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>STATUS</b>=what? &nbsp;<b>DIFF</b>=what's different? &nbsp;<b>LOG</b>=what happened? &nbsp;<b>SHOW</b>=show me that commit</div></div>
+  </div>
+
+  <!-- 4. STAGING -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">04</span><span class="sec-title">Staging</span><span class="zone-tag tag-staging">staging area</span></div>
+    <p class="sec-desc">Working Directory → Staging Area.</p>
+    <div class="grid">
+      <div class="cmd"><span class="code">git add file.txt</span><p>Stage one file.</p></div>
+      <div class="cmd"><span class="code">git add .</span><p>Stage everything.</p></div>
+      <div class="cmd"><span class="code">git restore --staged file.txt</span><p>Remove a file from staging.</p></div>
+    </div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>ADD</b> = prepare for commit</div></div>
+  </div>
+
+  <!-- 5. COMMIT -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">05</span><span class="sec-title">Commit</span><span class="zone-tag tag-local">local repository</span></div>
+    <p class="sec-desc">Staging Area → Local Repository.</p>
+    <div class="grid">
+      <div class="cmd"><span class="code">git commit -m "message"</span><p>Create a commit.</p></div>
+      <div class="cmd"><span class="code">git commit -am "message"</span><p>Stage tracked files and commit in one step.</p></div>
+      <div class="cmd"><span class="code">git commit --amend</span><p>Modify the previous commit.</p></div>
+    </div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>COMMIT</b> = local checkpoint</div></div>
+  </div>
+
+  <!-- 6. BRANCHING -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">06</span><span class="sec-title">Branching</span><span class="zone-tag tag-local">local repository</span></div>
+    <p class="sec-desc">Parallel lines of development inside the local repo.</p>
+    <div class="grid">
+      <div class="cmd"><span class="code">git branch</span><p>List branches.</p></div>
+      <div class="cmd"><span class="code">git branch feature/login</span><p>Create a branch.</p></div>
+      <div class="cmd"><span class="code">git switch feature/login</span><p>Switch to a branch.</p></div>
+      <div class="cmd"><span class="code">git switch -c feature/login</span><p>Create and switch in one step.</p></div>
+      <div class="cmd"><span class="code">git checkout &lt;branch&gt;</span><p>Older way to switch branches.</p></div>
+      <div class="cmd"><span class="code">git branch -d feature/login</span><p>Delete a merged branch.</p></div>
+      <div class="cmd"><span class="code">git branch -D feature/login</span><p>Force-delete a branch.</p></div>
+    </div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>BRANCH</b> = parallel development &nbsp;·&nbsp; <b>SWITCH</b> = move between branches</div></div>
+  </div>
+
+  <!-- 7. MERGING -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">07</span><span class="sec-title">Merging</span><span class="zone-tag tag-local">local repository</span></div>
+    <p class="sec-desc">Combine two branch histories into one.</p>
+    <div class="grid">
+      <div class="cmd"><span class="code">git merge feature/login</span><p>Merge a branch into the current branch.</p></div>
+      <div class="cmd"><span class="code">git merge --abort</span><p>Cancel a conflicted merge.</p></div>
+    </div>
+    <div class="diagram-box">main    ─────<span class="g">A</span>────<span class="g">B</span>────────<span class="hi">M</span>
+                 \                /
+feature           <span class="b">C</span>────<span class="b">D</span>───┘</div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>MERGE</b> = combine histories</div></div>
+  </div>
+
+  <!-- 8. REMOTES -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">08</span><span class="sec-title">Remote Repositories</span><span class="zone-tag tag-remote">remote</span></div>
+    <p class="sec-desc">Local Repository ⇄ Remote Repository.</p>
+    <div class="grid">
+      <div class="cmd"><span class="code">git remote -v</span><p>Show configured remotes.</p></div>
+      <div class="cmd"><span class="code">git remote add origin &lt;url&gt;</span><p>Connect a remote repository.</p></div>
+      <div class="cmd"><span class="code">git fetch</span><p>Download remote info WITHOUT merging.</p></div>
+      <div class="cmd"><span class="code">git pull</span><p>Fetch + integrate remote changes.</p></div>
+      <div class="cmd"><span class="code">git push</span><p>Upload commits.</p></div>
+      <div class="cmd"><span class="code">git push -u origin branch</span><p>First push + set upstream tracking.</p></div>
+    </div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>FETCH</b> = download, don't integrate &nbsp;·&nbsp; <b>PULL</b> = download + integrate &nbsp;·&nbsp; <b>PUSH</b> = upload</div></div>
+  </div>
+
+  <!-- 9. UNDO/RECOVERY -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">09</span><span class="sec-title">Undo / Recovery</span><span class="zone-tag tag-working">working dir</span><span class="zone-tag tag-local">local repo</span></div>
+    <p class="sec-desc">The three most confused commands in Git — separated by exactly what they undo.</p>
+    <div class="grid">
+      <div class="cmd safe-note"><span class="code">git restore file.txt</span><p>Discard working-directory changes.</p></div>
+      <div class="cmd safe-note"><span class="code">git restore --staged file.txt</span><p>Unstage a file.</p></div>
+      <div class="cmd safe-note"><span class="code">git revert &lt;commit&gt;</span><p>Create a new commit that reverses an old one.</p></div>
+      <div class="cmd"><span class="code">git reset --soft HEAD~1</span><p>Remove commit, keep changes staged.</p></div>
+      <div class="cmd"><span class="code">git reset HEAD~1</span><p>Remove commit, keep working changes.</p></div>
+      <div class="cmd danger"><span class="code">git reset --hard HEAD~1</span><p>Remove commit AND changes — unrecoverable via normal means.</p></div>
+    </div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>RESTORE</b> = files &nbsp;·&nbsp; <b>RESET</b> = move local history &nbsp;·&nbsp; <b>REVERT</b> = safely undo committed history</div></div>
+    <div class="warn-banner"><span class="wsym">⚠</span><div class="wtext"><b>git reset --hard</b> — Destructive. Uncommitted and committed changes past this point can be permanently lost. Prefer <b>revert</b> on shared branches.</div></div>
+  </div>
+
+  <!-- 10. STASH -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">10</span><span class="sec-title">Stash</span><span class="zone-tag tag-working">working dir</span></div>
+    <p class="sec-desc">Temporary shelf for unfinished changes.</p>
+    <div class="grid">
+      <div class="cmd"><span class="code">git stash</span><p>Temporarily store unfinished changes.</p></div>
+      <div class="cmd"><span class="code">git stash list</span><p>List stashes.</p></div>
+      <div class="cmd"><span class="code">git stash pop</span><p>Restore + remove latest stash.</p></div>
+      <div class="cmd"><span class="code">git stash apply</span><p>Restore but keep the stash.</p></div>
+      <div class="cmd"><span class="code">git stash drop</span><p>Delete a stash.</p></div>
+    </div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>STASH</b> = temporary shelf</div></div>
+  </div>
+
+  <!-- 11. REBASE -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">11</span><span class="sec-title">Rebase</span><span class="zone-tag tag-local">local repository</span></div>
+    <p class="sec-desc">Replay commits for a clean, linear history.</p>
+    <div class="grid">
+      <div class="cmd"><span class="code">git rebase main</span><p>Replay commits on top of main.</p></div>
+      <div class="cmd"><span class="code">git rebase -i HEAD~3</span><p>Interactive history cleanup.</p></div>
+      <div class="cmd"><span class="code">git rebase --continue</span><p>Continue after resolving a conflict.</p></div>
+      <div class="cmd"><span class="code">git rebase --abort</span><p>Cancel the rebase.</p></div>
+    </div>
+    <div class="diagram-box">Before:
+main     <span class="g">A</span>──<span class="g">B</span>──<span class="g">C</span>
+              \
+feature        <span class="b">D</span>──<span class="b">E</span>
+
+After rebase:
+main     <span class="g">A</span>──<span class="g">B</span>──<span class="g">C</span>──<span class="hi">D'</span>──<span class="hi">E'</span></div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>REBASE</b> = replay / clean linear history</div></div>
+  </div>
+
+  <!-- 12. CHERRY-PICK -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">12</span><span class="sec-title">Cherry-Pick</span><span class="zone-tag tag-local">local repository</span></div>
+    <p class="sec-desc">Copy one specific commit onto the current branch.</p>
+    <div class="grid">
+      <div class="cmd"><span class="code">git cherry-pick &lt;commit&gt;</span><p>Copy one specific commit onto the current branch.</p></div>
+    </div>
+    <div class="diagram-box">Branch A:  <span class="g">A</span>──<span class="g">B</span>──<span class="g">C</span>
+                     │
+Branch B:  <span class="b">D</span>──<span class="b">E</span>──<span class="hi">C'</span> ◄── copied</div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>CHERRY-PICK</b> = pick one commit</div></div>
+  </div>
+
+  <!-- 13. TAGS -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">13</span><span class="sec-title">Tags</span><span class="zone-tag tag-local">local</span><span class="zone-tag tag-remote">remote</span></div>
+    <p class="sec-desc">Mark release points in history.</p>
+    <div class="grid">
+      <div class="cmd"><span class="code">git tag</span><p>List tags.</p></div>
+      <div class="cmd"><span class="code">git tag v1.0</span><p>Create a lightweight tag.</p></div>
+      <div class="cmd"><span class="code">git tag -a v1.0 -m "Release v1.0"</span><p>Create an annotated release tag.</p></div>
+      <div class="cmd"><span class="code">git push origin v1.0</span><p>Push a single tag.</p></div>
+      <div class="cmd"><span class="code">git push origin --tags</span><p>Push all tags.</p></div>
+    </div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>TAG</b> = release marker</div></div>
+  </div>
+
+  <!-- 14. FILE MANAGEMENT -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">14</span><span class="sec-title">File Management</span><span class="zone-tag tag-working">working dir</span></div>
+    <div class="grid">
+      <div class="cmd"><span class="code">git rm file.txt</span><p>Remove a tracked file.</p></div>
+      <div class="cmd"><span class="code">git mv old.txt new.txt</span><p>Rename or move a tracked file.</p></div>
+      <div class="cmd"><span class="code">.gitignore</span><p>Files Git should ignore entirely.</p></div>
+    </div>
+  </div>
+
+  <!-- 15. CONFLICT RESOLUTION -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">15</span><span class="sec-title">Conflict Resolution</span><span class="zone-tag tag-working">working dir</span><span class="zone-tag tag-local">local repo</span></div>
+    <p class="sec-desc">Triggered by pull / merge / rebase when histories collide.</p>
+    <div class="conflict-flow">
+      <div class="cflow-node warn">CONFLICT</div><div class="cflow-arrow">→</div>
+      <div class="cflow-node">open conflicted files</div><div class="cflow-arrow">→</div>
+      <div class="cflow-node">choose / fix correct code</div><div class="cflow-arrow">→</div>
+      <div class="cflow-node">git add &lt;file&gt;</div><div class="cflow-arrow">→</div>
+      <div class="cflow-node">git commit <span style="color:var(--text-faint)">(or rebase --continue)</span></div>
+    </div>
+    <div class="markers"><span class="l1">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span><br>current code<br><span class="l2">=======</span><br>incoming code<br><span class="l3">&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature</span></div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>FIX → ADD → CONTINUE/COMMIT</b></div></div>
+  </div>
+
+  <!-- 16. DEBUGGING -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">16</span><span class="sec-title">Debugging / Advanced Commands</span><span class="zone-tag tag-advanced">forensics</span></div>
+    <p class="sec-desc">For when something already went wrong.</p>
+    <div class="grid">
+      <div class="cmd"><span class="code">git blame &lt;file&gt;</span><p>Who changed each line?</p></div>
+      <div class="cmd"><span class="code">git bisect start</span><p>Binary-search which commit introduced a bug.</p></div>
+      <div class="cmd safe-note"><span class="code">git reflog</span><p>History of HEAD movements — recover "lost" commits.</p></div>
+      <div class="cmd"><span class="code">git clean -n</span><p>Preview untracked files that would be removed.</p></div>
+      <div class="cmd danger"><span class="code">git clean -fd</span><p>Remove untracked files and directories — permanent.</p></div>
+    </div>
+    <div class="memory"><span class="m-icon">MEM</span><div class="m-body"><b>BLAME</b> = who changed it? &nbsp;·&nbsp; <b>BISECT</b> = which commit broke it? &nbsp;·&nbsp; <b>REFLOG</b> = where was HEAD?</div></div>
+    <div class="warn-banner"><span class="wsym">⚠</span><div class="wtext"><b>git clean -fd</b> — Destructive. Deletes untracked files/folders with no recovery path. Always run <b>-n</b> first.</div></div>
+  </div>
+
+  <!-- 17. DAILY WORKFLOW -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">17</span><span class="sec-title">Daily DevOps Workflow</span><span class="zone-tag tag-remote">end-to-end</span></div>
+    <p class="sec-desc">What a typical feature ticket looks like in practice, clone to production.</p>
+    <div class="flow-vert">
+      <div class="flow-step">git clone</div><div class="flow-arrow-v">↓</div>
+      <div class="flow-step hi">git switch -c feature/JIRA-123</div><div class="flow-arrow-v">↓</div>
+      <div class="flow-step" style="font-family:'Inter',sans-serif; font-style:italic; color:var(--text-dim);">modify code</div><div class="flow-arrow-v">↓</div>
+      <div class="flow-step">git status</div><div class="flow-arrow-v">↓</div>
+      <div class="flow-step">git diff</div><div class="flow-arrow-v">↓</div>
+      <div class="flow-step">git add .</div><div class="flow-arrow-v">↓</div>
+      <div class="flow-step hi">git commit -m "JIRA-123: change"</div><div class="flow-arrow-v">↓</div>
+      <div class="flow-step">git pull --rebase</div><div class="flow-arrow-v">↓</div>
+      <div class="flow-step hi">git push -u origin feature/JIRA-123</div><div class="flow-arrow-v">↓</div>
+      <div class="flow-step" style="font-family:'Inter',sans-serif; color:var(--remote);">Pull Request</div><div class="flow-arrow-v">↓</div>
+      <div class="flow-step" style="font-family:'Inter',sans-serif; color:var(--remote);">Code Review</div><div class="flow-arrow-v">↓</div>
+      <div class="flow-step" style="font-family:'Inter',sans-serif; color:var(--local);">Merge</div><div class="flow-arrow-v">↓</div>
+      <div class="flow-step" style="font-family:'Inter',sans-serif; color:var(--orange);">CI Pipeline — Build → Test → Security Scan</div><div class="flow-arrow-v">↓</div>
+      <div class="flow-step" style="font-family:'Inter',sans-serif; color:var(--orange);">CD Pipeline — DEV → QA/UAT → PROD</div>
+    </div>
+  </div>
+
+  <!-- 18. MASTER MEMORY MAP -->
+  <div class="section">
+    <div class="sec-head"><span class="sec-num">18</span><span class="sec-title">Most Important Memory Map</span><span class="zone-tag tag-orange" style="color:var(--orange); border-color:var(--orange-dim); background:#1c0f0b;">summary</span></div>
+    <p class="sec-desc">If you remember nothing else, remember this chain.</p>
+    <div class="mastermap">
+      <div class="mm-node n1"><div class="mm-title">CREATE</div><div class="mm-cmds">init · clone</div></div><div class="mm-arrow">↓</div>
+      <div class="mm-node n2"><div class="mm-title">CHECK</div><div class="mm-cmds">status · diff · log</div></div><div class="mm-arrow">↓</div>
+      <div class="mm-node n3"><div class="mm-title">STAGE</div><div class="mm-cmds">add</div></div><div class="mm-arrow">↓</div>
+      <div class="mm-node n4"><div class="mm-title">SAVE</div><div class="mm-cmds">commit</div></div><div class="mm-arrow">↓</div>
+      <div class="mm-node n5"><div class="mm-title">SYNC</div><div class="mm-cmds">fetch · pull · push</div></div><div class="mm-arrow">↓</div>
+      <div class="mm-node n6"><div class="mm-title">COLLABORATE</div><div class="mm-cmds">branch · switch · merge · rebase</div></div><div class="mm-arrow">↓</div>
+      <div class="mm-node n7"><div class="mm-title">TEMPORARILY SAVE</div><div class="mm-cmds">stash</div></div><div class="mm-arrow">↓</div>
+      <div class="mm-node n8"><div class="mm-title">UNDO</div><div class="mm-cmds">restore · revert · reset</div></div><div class="mm-arrow">↓</div>
+      <div class="mm-node n9"><div class="mm-title">RECOVER / DEBUG</div><div class="mm-cmds">reflog · blame · bisect</div></div><div class="mm-arrow">↓</div>
+      <div class="mm-node n10"><div class="mm-title">RELEASE</div><div class="mm-cmds">tag</div></div>
+    </div>
+  </div>
+
+  <!-- FINAL MESSAGE -->
+  <div class="final">
+    <blockquote>"Git is easier to remember when you understand <span>WHERE</span> a command acts."</blockquote>
+    <div class="final-chain"><b>Working Directory</b> → <b>Staging</b> → <b>Local Repository</b> → <b>Remote Repository</b></div>
+    <div class="kv-list">
+      <div class="kv"><b>ADD → COMMIT → PUSH</b> — the core save chain</div>
+      <div class="kv"><b>FETCH</b> — download only</div>
+      <div class="kv"><b>PULL</b> — download + integrate</div>
+      <div class="kv"><b>STASH</b> — temporary save</div>
+      <div class="kv"><b>RESTORE</b> — file undo</div>
+      <div class="kv"><b>REVERT</b> — safe commit undo</div>
+      <div class="kv"><b>RESET</b> — move history</div>
+      <div class="kv"><b>REBASE</b> — replay history</div>
+      <div class="kv"><b>CHERRY-PICK</b> — copy one commit</div>
+      <div class="kv"><b>REFLOG</b> — recover history</div>
+    </div>
+  </div>
+
+  <footer>GIT COMMAND MASTER MAP · daily reference &amp; interview revision</footer>
+</div>
+</body>
+</html>

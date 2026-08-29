@@ -1,0 +1,25 @@
+name: Learning improvement
+description: Suggest a safe Git lab, scenario, or explanation.
+title: "[Learning]: "
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: level
+    attributes:
+      label: Audience level
+      options: [Beginner, Intermediate, Advanced, Production, Senior/Architect]
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Demonstrable outcome
+      description: What should a learner be able to explain or perform safely?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed exercise or explanation
+    validations:
+      required: true

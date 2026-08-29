@@ -1,0 +1,33 @@
+name: Lab or documentation defect
+description: Report a reproducible problem without sharing sensitive repository data.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Reproduce problems in a disposable sandbox. Never attach private repository history or credentials.
+  - type: input
+    id: git-version
+    attributes:
+      label: Git version
+      placeholder: git version 2.x
+    validations:
+      required: true
+  - type: input
+    id: module
+    attributes:
+      label: Lab or document
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Sanitized reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
