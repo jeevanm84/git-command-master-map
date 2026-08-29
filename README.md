@@ -17,7 +17,7 @@ The map is the memory aid. The repository is the practice environment.
 ## Understand where Git commands act
 
 ```mermaid
-flowchart LR
+flowchart TB
   WD[Working directory] -->|git add| Index[Staging area / index]
   Index -->|git commit| Local[Local repository]
   Local -->|git push| Remote[Remote repository]
