@@ -7,7 +7,7 @@ A team deploys from `main`. Direct pushes and force-pushes must not bypass revie
 ## Design the workflow
 
 ```mermaid
-flowchart LR
+flowchart TB
   Issue[Issue / incident] --> Branch[Focused branch]
   Branch --> Commits[Small verified commits]
   Commits --> PR[Pull request]

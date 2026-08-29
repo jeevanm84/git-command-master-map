@@ -5,7 +5,7 @@ Commands are easier to select when you understand the state they read or change.
 ## Four working locations
 
 ```mermaid
-flowchart LR
+flowchart TB
   WD[Working directory<br/>files you edit]
   Index[Index / staging area<br/>next snapshot]
   Repo[Local object database<br/>commits, trees and blobs]
